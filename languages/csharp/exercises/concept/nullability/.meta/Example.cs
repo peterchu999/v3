@@ -4,24 +4,28 @@ public static class Badge
 {
     public static string Label(int? id, string name, string? department)
     {
-        var idLabel = (id == null ? "" : $"[{id}] - ");
-        return $"{idLabel}{name} - {department?.ToUpper() ?? "GUEST"}";
+        var worksAt = department?.ToUpper() ?? "GUEST";
+
+        if (id == null)
+        {
+            return $"{name} - {worksAt}";
+        }
+
+        return $"[{id}] - {name} - {worksAt}";
     }
 
-    public static string PrintLabel(string? prefix,
-                                    string label,
-                                    int maximumWidth)
+    public static string PrintLabel(string? prefix, string label, int maximumWidth)
     {
-        maximumWidth -= prefix?.Length ?? 0;
-
+        var maximumLabelWidth = maximumWidth - (prefix?.Length ?? 0);
         var output = "";
-        for (int i = 0; i < label.Length; i += maximumWidth)
+
+        for (var i = 0; i < label.Length; i += maximumLabelWidth)
         {
-            output += (prefix ?? "") +
-                label.Substring(i, Math.Min(maximumWidth,
-                                            label.Length - i)) + "\n";
+            var labelWidth = Math.Min(maximumLabelWidth, label.Length - i);
+            var truncatedLabel = label.Substring(i, labelWidth);
+            output += $"{prefix ?? ""}{truncatedLabel}\n";
         }
+
         return output.TrimEnd();
     }
-
 }
